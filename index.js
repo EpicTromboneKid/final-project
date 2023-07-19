@@ -1,23 +1,13 @@
-let difficultyLevel = document.getElementById("difficulty");
 let button = document.querySelector("button");
 let fileSelector = document.getElementById("fileSelector");
 let objectNumber;
-const API_URL = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBIFjJdqkHAHw1ZRHfa7vT6QReoyua4Sog'
+const GOOGLE_API_URL = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBIFjJdqkHAHw1ZRHfa7vT6QReoyua4Sog'
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+let sentenceTemplate = "Make a sentence using the following words: ";
+let listOfObjects = "";
+
 button.addEventListener("click", () => {
     console.log("generating!")
-    if (difficultyLevel.value == "easy"){
-        objectNumber = 4;
-        console.log("easy");    
-    } else if (difficultyLevel.value == "normal"){
-        objectNumber = 8
-        console.log("normal");
-    } else if (difficultyLevel.value == "hard"){
-        console.log("hard");
-        objectNumber = 12;
-    } else {
-        console.log("error!!");
-    }
-    difficultyLevel.value = "";
 });
 
 fileSelector.addEventListener("change", async () => {
@@ -37,7 +27,7 @@ fileSelector.addEventListener("change", async () => {
         });
       }   
     const base64File = await getBase64(file);
-    const response = await fetch(API_URL, {
+    const response = await fetch(GOOGLE_API_URL, {
     method: "POST",
     body: JSON.stringify ({
         "requests": [
@@ -47,7 +37,7 @@ fileSelector.addEventListener("change", async () => {
               },
               "features": [
                 {
-                  "maxResults": objectNumber,
+                  "maxResults": 10,
                   "type": "OBJECT_LOCALIZATION"
                 },
               ]
@@ -60,5 +50,29 @@ fileSelector.addEventListener("change", async () => {
 });
     const data = await response.json();
     console.log(data);
+    for (i = 0; i < data.responses[0].localizedObjectAnnotations.length; i++){
+      listOfObjects = listOfObjects.concat(" ", data.responses[0].localizedObjectAnnotations[i].name);
+    }
+    console.log(listOfObjects);
+    sentenceTemplate = sentenceTemplate.concat(listOfObjects);
 
+    const predecessor = await fetch(OPENAI_API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        "model": "gpt-3.5-turbo",
+        "messages":[{"role": "user", "content": sentenceTemplate}],
+        "temperature": 2,
+		"max_tokens": 30
+      }),
+	  headers: {
+		"Content-Type": "application/json",
+		"Authorization": "Bearer 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",
+	  }
+    });
+	let plaintext = await predecessor.json();
+	console.log(plaintext.choices[0].message.content);
 });
+
+
+
+// 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
