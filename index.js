@@ -19,7 +19,8 @@ function randomShifter(){
 
 
 fileSelector.addEventListener("change", async () => {
-    cipherArea.innerHTML = "";
+  textarea.value = "";
+  cipherArea.innerHTML = "";
 	ciphertext = "";
 	plaintext = "";
 	listOfObjects = "";	
@@ -107,6 +108,7 @@ submitter.addEventListener("click", () => {
 	} else {
 		textarea.value = "Try again.";
 	}
+  console.log(answer);
 });
 
 
