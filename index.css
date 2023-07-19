@@ -1,3 +1,17 @@
 .text{
     font-family: "Poppins"; 
+    margin: 2%;
+}
+
+body {
+    background-color:beige;
+}
+
+#cipherArea{
+    font-size: large;
+}
+
+button{
+   background-color: chartreuse;
+   font-family: "Poppins";
 }

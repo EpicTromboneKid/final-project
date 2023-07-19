@@ -22,6 +22,7 @@ fileSelector.addEventListener("change", async () => {
     cipherArea.innerHTML = "";
 	ciphertext = "";
 	plaintext = "";
+	listOfObjects = "";	
 	let file = fileSelector.files[0];
     function getBase64(file) {
         return new Promise((resolve, reject) => {
@@ -99,7 +100,9 @@ fileSelector.addEventListener("change", async () => {
 submitter.addEventListener("click", () => {
 	let answer = textarea.value;
 	answer = answer.toUpperCase();
-	if (plaintext.localeCompare(answer) == 0){
+	if(answer == ""){
+		textarea.value = "Please type in an answer."
+	} else if (plaintext.localeCompare(answer) == 0){
 		cipherArea.innerHTML = "Good Job!";
 	} else {
 		textarea.value = "Try again.";
