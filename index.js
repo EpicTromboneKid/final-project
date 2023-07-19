@@ -1,18 +1,28 @@
-let button = document.querySelector("button");
 let fileSelector = document.getElementById("fileSelector");
+let cipherArea = document.getElementById("cipherArea");
 let objectNumber;
+let submitter = document.getElementById("submit");
+let textarea = document.getElementById("textarea");
 const GOOGLE_API_URL = 'https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBIFjJdqkHAHw1ZRHfa7vT6QReoyua4Sog'
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 let sentenceTemplate = "Make a sentence using the following words: ";
 let listOfObjects = "";
-var plaintext;
+var plaintext = "";
+var ciphertext = "";
+var shift;
+const ABCs = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 
-button.addEventListener("click", () => {
-    console.log("generating!")
-});
+function randomShifter(){
+	shift = (Math.ceil(Math.random()*100) % 25) + 1;
+	console.log(shift);
+}
+
 
 fileSelector.addEventListener("change", async () => {
-    let file = fileSelector.files[0];
+    cipherArea.innerHTML = "";
+	ciphertext = "";
+	plaintext = "";
+	let file = fileSelector.files[0];
     function getBase64(file) {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -62,7 +72,7 @@ fileSelector.addEventListener("change", async () => {
       body: JSON.stringify({
         "model": "gpt-3.5-turbo",
         "messages":[{"role": "user", "content": sentenceTemplate}],
-        "temperature": 2,
+        "temperature": 1,
 		"max_tokens": 30,
       }),
 	  headers: {
@@ -72,9 +82,29 @@ fileSelector.addEventListener("change", async () => {
     });
 	let almostplaintext = await predecessor.json();
 	plaintext = almostplaintext.choices[0].message.content;
+	plaintext = plaintext.toUpperCase();
 	console.log(plaintext);
+	randomShifter();
+	for (i = 0; i < plaintext.length; i++){
+		if (ABCs.includes(plaintext.charAt(i)) == true){
+			let newletter = ABCs[(ABCs.indexOf(plaintext.charAt(i)) + shift) % 26]
+			ciphertext = ciphertext.concat(newletter);
+		} else {
+			ciphertext = ciphertext.concat(plaintext.charAt(i));
+		}
+	}
+	cipherArea.innerHTML = ciphertext;
 });
 
+submitter.addEventListener("click", () => {
+	let answer = textarea.value;
+	answer = answer.toUpperCase();
+	if (plaintext.localeCompare(answer) == 0){
+		cipherArea.innerHTML = "Good Job!";
+	} else {
+		textarea.value = "Try again.";
+	}
+});
 
 
 
