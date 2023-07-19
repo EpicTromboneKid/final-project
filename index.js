@@ -5,6 +5,7 @@ const GOOGLE_API_URL = 'https://vision.googleapis.com/v1/images:annotate?key=AIz
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 let sentenceTemplate = "Make a sentence using the following words: ";
 let listOfObjects = "";
+var plaintext;
 
 button.addEventListener("click", () => {
     console.log("generating!")
@@ -62,17 +63,18 @@ fileSelector.addEventListener("change", async () => {
         "model": "gpt-3.5-turbo",
         "messages":[{"role": "user", "content": sentenceTemplate}],
         "temperature": 2,
-		"max_tokens": 30
+		"max_tokens": 30,
       }),
 	  headers: {
 		"Content-Type": "application/json",
 		"Authorization": "Bearer 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",
 	  }
     });
-	let plaintext = await predecessor.json();
-	console.log(plaintext.choices[0].message.content);
+	let almostplaintext = await predecessor.json();
+	plaintext = almostplaintext.choices[0].message.content;
+	console.log(plaintext);
 });
 
 
 
-// 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
+
