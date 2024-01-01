@@ -79,7 +79,7 @@ fileSelector.addEventListener("change", async () => {
       }),
 	  headers: {
 		"Content-Type": "application/json",
-		"Authorization": "Bearer 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",
+		"Authorization": "Bearer <api_key>",
 	  }
     });
 	let almostplaintext = await predecessor.json();
